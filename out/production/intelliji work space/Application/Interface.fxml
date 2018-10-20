@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="835.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.Controller">
+   <children>
+      <TabPane layoutX="120.0" layoutY="21.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab text="Preprocess">
+               <content>
+                  <AnchorPane prefHeight="421.0" prefWidth="743.0">
+                     <children>
+                        <Label layoutX="14.0" layoutY="133.0" text="Attributes">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="combobox" onAction="#afficheInstance" prefHeight="43.0" prefWidth="713.0" promptText="Choose File" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <Label layoutX="13.0" layoutY="58.0" text="Current Selection">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="363.0" layoutY="126.0" text="Selected Attribute">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                        <Separator layoutX="5.0" layoutY="120.0" prefHeight="0.0" prefWidth="684.0" />
+                        <Pane layoutX="-34.0" layoutY="367.0" prefHeight="82.0" prefWidth="338.0">
+                           <children>
+                              <Label layoutX="561.0" layoutY="-288.0" prefHeight="24.0" prefWidth="82.0" text="Attributes:">
+                                 <font>
+                                    <Font name="System Bold Italic" size="13.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="attributes" layoutX="647.0" layoutY="-288.0" mouseTransparent="true" prefHeight="26.0" prefWidth="70.0" />
+                              <Label layoutX="48.0" layoutY="-283.0" prefHeight="16.0" prefWidth="69.0" text="Relation:">
+                                 <font>
+                                    <Font name="System Bold Italic" size="13.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="relation" layoutX="139.0" layoutY="-287.0" mouseTransparent="true" prefHeight="26.0" prefWidth="203.0" />
+                              <TextField fx:id="instances" layoutX="464.0" layoutY="-288.0" mouseTransparent="true" prefHeight="26.0" prefWidth="84.0" />
+                              <Separator layoutX="-3.0" layoutY="-11.0" orientation="VERTICAL" prefHeight="105.0" prefWidth="7.0" />
+                           </children>
+                        </Pane>
+                        <Separator layoutX="688.0" layoutY="67.0" orientation="VERTICAL" prefHeight="57.0" prefWidth="6.0" />
+                        <Separator layoutX="160.0" layoutY="66.0" prefHeight="0.0" prefWidth="528.0" />
+                        <Separator layoutX="504.0" layoutY="134.0" prefHeight="2.0" prefWidth="312.0" />
+                        <Separator layoutX="354.0" layoutY="134.0" orientation="VERTICAL" prefHeight="267.0" prefWidth="1.0" />
+                        <Separator layoutX="354.0" layoutY="405.0" prefHeight="0.0" prefWidth="467.0" />
+                        <Separator layoutX="820.0" layoutY="134.0" orientation="VERTICAL" prefHeight="267.0" prefWidth="6.0" />
+                        <Label layoutX="367.0" layoutY="194.0" text="Distincts:">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="617.0" layoutY="157.0" text="Type:">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="367.0" layoutY="157.0" text="Name:">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                        <TableView fx:id="table1" layoutX="365.0" layoutY="222.0" prefHeight="168.0" prefWidth="447.0" AnchorPane.bottomAnchor="177.0" AnchorPane.leftAnchor="365.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="222.0">
+                          <columns>
+                            <TableColumn fx:id="nume" prefWidth="75.0" text="N°" />
+                            <TableColumn fx:id="label" prefWidth="75.0" text="Name" />
+                              <TableColumn fx:id="count" prefWidth="75.0" text="count" />
+                              <TableColumn fx:id="weight" prefWidth="75.0" text="weight" />
+                          </columns>
+                        </TableView>
+                        <TextField fx:id="Nom" layoutX="419.0" layoutY="155.0" prefHeight="26.0" prefWidth="176.0" />
+                        <TextField fx:id="distincts" layoutX="462.0" layoutY="190.0" prefHeight="26.0" prefWidth="94.0" />
+                        <TextField fx:id="Type" layoutX="672.0" layoutY="152.0" prefHeight="26.0" prefWidth="102.0" />
+                        <Label layoutX="337.0" layoutY="83.0" text="Instances:">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                        <TableView fx:id="table" layoutX="14.0" layoutY="157.0" prefHeight="395.0" prefWidth="331.0">
+                          <columns>
+                            <TableColumn fx:id="num" prefWidth="37.0" text="N" />
+                            <TableColumn fx:id="name" prefWidth="148.0" text="Name" />
+                              <TableColumn fx:id="type" prefWidth="144.0" text="Type" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+          <Tab text="Intance Content">
+               <content>
+                  <TextArea fx:id="cotent" prefHeight="200.0" prefWidth="200.0" />
+               </content></Tab>
+            <Tab text="Histogramme">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <BarChart fx:id="barchart" layoutX="106.0" layoutY="79.0">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </BarChart>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Boxe-plot">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
+            <Tab text="Tree">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
