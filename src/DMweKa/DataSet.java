@@ -3,14 +3,11 @@ package DMweKa;
 import java.util.ArrayList;
 
 import weka.core.*;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Standardize;
-import weka.filters.unsupervised.attribute.NominalToBinary;
-import weka.filters.unsupervised.attribute.ReplaceMissingValues;
+import DMweKa.Application.ListAttributTable;
+
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import DMweKa.Application.ListAttributTable;
 
 
 public class DataSet {
@@ -26,18 +23,14 @@ public class DataSet {
     private int nbAttributs ;
 
     public DataSet(Instances data) {
-        relation = data.relationName();
-        try {
-            data = preProcessData(data,true,false,false);
-            data.setRelationName(relation);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
+        relation = data.relationName();
         nbInstances = data.numInstances();
         this.instances = new ArrayList<>(data);
-
         nbAttributs = data.numAttributes() ;
+
+        data = PreProcessing.preProcessData(data);
+
         for(int i=0;i<data.numAttributes();i++){
             attributs.add(new AttributDataSet(data.attribute(i),data.attributeStats(i),data));
             listAttributs.add(data.attribute(i).name());
@@ -97,27 +90,5 @@ public class DataSet {
         // TODO
     }
 
-    public static Instances preProcessData(Instances data, boolean shouldImpute,
-                                           boolean shouldStandardize,boolean shouldBinarize) throws Exception {
-
-        if( shouldImpute ) {
-            Filter impute = new ReplaceMissingValues();
-            impute.setInputFormat(data);
-            data = Filter.useFilter(data, impute);
-        }
-        if( shouldStandardize ) {
-            Filter standardize = new Standardize();
-            standardize.setInputFormat(data);
-            data = Filter.useFilter(data, standardize);
-        }
-        if( shouldBinarize ) {
-            Filter binarize = new NominalToBinary();
-            binarize.setInputFormat(data);
-            // make resulting binary attrs nominal, not numeric
-            binarize.setOptions(new String[] { "-N" } );
-            data = Filter.useFilter(data, binarize);
-        }
-        return data;
-    }
 
 }

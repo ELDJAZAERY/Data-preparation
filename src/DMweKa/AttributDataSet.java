@@ -97,8 +97,9 @@ public class AttributDataSet {
         return ""+midRange;
     }
 
+
     public String mode(){
-        return ""+0;
+        return ""+mode;
     }
 
 
@@ -132,10 +133,9 @@ public class AttributDataSet {
 
 
     private void calculeMode(){
-
         // For count the frequent of each Attribut's value < Nominal , Numeric and Date >
-        TreeMap<Double,Integer> valsFreq = new TreeMap<Double,Integer>() ;
-        TreeMap<String,Integer> nominalFreq = new TreeMap<String,Integer>() ;
+        TreeMap<Double,Integer> valsFreq = new TreeMap<>() ;
+        TreeMap<String,Integer> nominalFreq = new TreeMap<>() ;
 
         Double numVal ; String nominalVal ; Integer freq ;
 
