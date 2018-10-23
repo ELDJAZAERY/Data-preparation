@@ -134,8 +134,9 @@ public class Controller {
             dataSet = new DataSet(dataSource.getDataSet());
 
             // TODO : affiche content of file in table element
-            Instances inst = DataSet.preProcessData(dataSource.getDataSet(),true,false,false);
-            cotent.appendText(inst.toString());
+            cotent.appendText(dataSource.getDataSet().toSummaryString());
+            Instances inst = PreProcessing.preProcessData(dataSource.getDataSet());
+            cotent.appendText(inst.toSummaryString());
 
             /** Instance  Proprities */
             relation.appendText(dataSet.relation());
