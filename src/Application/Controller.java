@@ -47,7 +47,7 @@ public class Controller {
     private TextField attributes;
 
     @FXML
-    private TextField instances;
+    private TextField nbinstances;
 
     @FXML
     private TextField Nom;
@@ -131,16 +131,20 @@ public class Controller {
         DataSource dataSource;
         try {
             dataSource = new DataSource(path+fileName);
-            dataSet = new DataSet(dataSource.getDataSet());
+            Instances instances = dataSource.getDataSet();
 
-            // TODO : affiche content of file in table element
-            cotent.appendText(dataSource.getDataSet().toSummaryString());
-            Instances inst = PreProcessing.preProcessData(dataSource.getDataSet());
-            cotent.appendText(inst.toSummaryString());
+            // Replace Missing Values !!
+            instances = PreProcessing.preProcessData(instances);
+
+            dataSet = new DataSet(instances);
+
+            // display --->
+            // TODO : poster the content in table element
+            cotent.appendText(instances.toSummaryString());
 
             /** Instance  Proprities */
             relation.appendText(dataSet.relation());
-            instances.appendText(Integer.toString(dataSet.nbInstances()));
+            nbinstances.appendText(Integer.toString(dataSet.nbInstances()));
             attributes.appendText(String.valueOf(dataSet.nbAttributs()));
 
             /** Show Attribut's Names and types in the Table Fx */
@@ -157,7 +161,7 @@ public class Controller {
 
 
     public void clearForInstance(){
-        cotent.clear();relation.clear();instances.clear();attributes.clear();
+        cotent.clear();relation.clear();nbinstances.clear();attributes.clear();
     }
 
     public void clearForAttribut(){

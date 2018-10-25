@@ -3,11 +3,6 @@ package DMweKa;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.NominalToBinary;
-import weka.filters.unsupervised.attribute.ReplaceMissingValues;
-import weka.filters.unsupervised.attribute.Standardize;
-
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -24,11 +19,9 @@ public class PreProcessing {
             for(int i=0;i<nbAttributs;i++){
                 if(inst.isMissing(i)){
                     if(inst.attribute(i).isNumeric()){
-                        System.out.println(" ------------------> value replace "+inst.value(i));
-                        inst.attribute(i).setWeight(replaceMissingNumeric(inst,inst.attribute(i),instances));
+                        inst.setValue(i,modeNumForClass(instances,inst.attribute(i),getClassOfInstance(inst)));
                     }else{
                         inst.setValue(i,modeNomForClass(instances,inst.attribute(i),getClassOfInstance(inst)));
-                        System.out.println(" ------------------> value replace "+inst.stringValue(i));
                     }
                 }
             }
@@ -37,13 +30,13 @@ public class PreProcessing {
     }
 
 
-    public static String modeNomForClass(ArrayList<Instance> instances , Attribute attribut, String clas){
-        // For count the frequent of each Attribut's value < Nominal and Date >
+    private static String modeNomForClass(ArrayList<Instance> instances , Attribute attribut, String clas){
+        /** For count the frequent of each Attribut's value < Nominal and Date > **/
         TreeMap<String,Integer> valsFreq = new TreeMap<>() ;
 
         String nominalVal ; Integer freq ;
 
-        /** Mode For  Numeric Type !! **/
+        /** Mode For  Nominal String and Date Type !! **/
         for(Instance inst:instances){
 
             // ignor this inst if :
@@ -65,40 +58,21 @@ public class PreProcessing {
         return valsFreq.firstKey();
     }
 
-
-
-
-    public static Double replaceMissingNumeric(Instance instance , Attribute attribut ,  ArrayList<Instance> instances){
-        if(missingClass(instance)) return modeNumForClass(instances,attribut,null);
-        else{
-            String clas ;
-            Attribute instanceClass  = instance.classAttribute();
-            if(instanceClass.isNumeric()) clas = Double.toString(instance.value(instanceClass));
-            else clas = instance.stringValue(instanceClass);
-
-            return modeNumForClass(instances,attribut,clas);
-        }
-    }
-
-    public static Double modeNumForClass(ArrayList<Instance> instances , Attribute attribut, String clas){
+    private static Double modeNumForClass(ArrayList<Instance> instances , Attribute attribut, String clas){
         // For count the frequent of each Attribut's value Numeric
         TreeMap<Double,Integer> valsFreq = new TreeMap<>() ;
 
         Double numVal ; Integer freq ;
 
-        boolean isClassMissing ;
         /** Mode For  Numeric Type !! **/
         for(Instance inst:instances){
 
             // ignor this inst if :
-            // 1) this instance non classed
-            // 2) val of att in this instance missing
-            // 3) this instance class dont equals to clas sence cals not null
-            if(missingClass(inst)) continue ;
+            // 1) missing val of att in this instance
+            // 2) this instance class dont equals to clas
             if(inst.isMissing(attribut)) continue;
             if(!appartienClss(inst,clas)) continue ;
 
-            //System.out.println("Entreeeeeeeeee !!!!");
             numVal = inst.value(attribut);
             if(valsFreq.containsKey(numVal)){
                 freq = valsFreq.get(numVal)+1;
@@ -115,7 +89,7 @@ public class PreProcessing {
 
 
 
-    public static String getClassOfInstance(Instance instance){
+    private static String getClassOfInstance(Instance instance){
         String clas = "missing";
         Attribute classAtt = instance.attribute(instance.numAttributes()-1);
         if(classAtt.name().equalsIgnoreCase("class")){
@@ -125,41 +99,11 @@ public class PreProcessing {
         return clas;
     }
 
-    public static boolean missingClass(Instance intance){
-        boolean missing = false;
-        //try{ missing = intance.classIsMissing(); }finally { return  missing;}
-        return missing;
-    }
-    public static boolean appartienClss(Instance instance , String class2){
+    private static boolean appartienClss(Instance instance , String class2){
         String class1 = getClassOfInstance(instance);
 
         if( class2 == null || class1.equals("missing") || class2.equals("missing")) return true ;
         return class1.equalsIgnoreCase(class2);
     }
-
-    public static Instances preProcessDataUsingWekaFiltres(Instances data, boolean shouldImpute,
-                                                           boolean shouldStandardize,boolean shouldBinarize) throws Exception {
-
-        if( shouldImpute ) {
-            Filter impute = new ReplaceMissingValues();
-            impute.setInputFormat(data);
-            data = Filter.useFilter(data, impute);
-        }
-        if( shouldStandardize ) {
-            Filter standardize = new Standardize();
-            standardize.setInputFormat(data);
-            data = Filter.useFilter(data, standardize);
-        }
-        if( shouldBinarize ) {
-            Filter binarize = new NominalToBinary();
-            binarize.setInputFormat(data);
-            // make resulting binary attrs nominal, not numeric
-            binarize.setOptions(new String[] { "-N" } );
-            data = Filter.useFilter(data, binarize);
-        }
-        return data;
-    }
-
-
 
 }

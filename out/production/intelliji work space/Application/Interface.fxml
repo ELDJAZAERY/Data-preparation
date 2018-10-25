@@ -55,7 +55,7 @@
                                  </font>
                               </Label>
                               <TextField fx:id="relation" layoutX="139.0" layoutY="-287.0" mouseTransparent="true" prefHeight="26.0" prefWidth="203.0" />
-                              <TextField fx:id="instances" layoutX="464.0" layoutY="-288.0" mouseTransparent="true" prefHeight="26.0" prefWidth="84.0" />
+                              <TextField fx:id="nbinstances" layoutX="464.0" layoutY="-288.0" mouseTransparent="true" prefHeight="26.0" prefWidth="84.0" />
                               <Separator layoutX="-3.0" layoutY="-11.0" orientation="VERTICAL" prefHeight="105.0" prefWidth="7.0" />
                            </children>
                         </Pane>

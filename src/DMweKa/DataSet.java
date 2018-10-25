@@ -23,27 +23,19 @@ public class DataSet {
     private int nbAttributs ;
 
     public DataSet(Instances data) {
-
-
         relation = data.relationName();
         nbInstances = data.numInstances();
         this.instances = new ArrayList<>(data);
         nbAttributs = data.numAttributes() ;
         data.setClassIndex(data.numAttributes() - 1);
 
-        //System.out.println(data);
+        // Replace Missing values !!
         data = PreProcessing.preProcessData(data);
-        System.out.println("\n\n\n\n");
-        //System.out.println(data);
 
         for(int i=0;i<data.numAttributes();i++){
             attributs.add(new AttributDataSet(data.attribute(i),data.attributeStats(i),data));
             listAttributs.add(data.attribute(i).name());
         }
-    }
-
-    private Instances normalization(Instances data){
-        return null;
     }
 
     public ArrayList<AttributDataSet> getAttributs() {
