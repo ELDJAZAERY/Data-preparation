@@ -1,6 +1,7 @@
 package Application;
 
 
+import DMweKa.Application.BoxPlot;
 import DMweKa.Application.DynamicTableFx;
 import DMweKa.Application.TableFx;
 import DMweKa.AttributDataSet;
@@ -9,6 +10,7 @@ import DMweKa.PreProcessing;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
@@ -17,6 +19,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 
@@ -128,6 +131,14 @@ public class Controller {
     private BarChart barchart;
 
 
+    // BoxPlot
+    @FXML
+    private BorderPane pane;
+    private SwingNode swingNode = new SwingNode();
+    private BoxPlot boxPlot;
+
+
+
     @FXML
     public void initialize() {
 
@@ -160,7 +171,7 @@ public class Controller {
             if(fileList.length > 0) { combobox.setValue(fileList[0].getName()); afficheInstance();}
         }
 
-
+        pane.setCenter(swingNode);
     }
 
 
@@ -190,6 +201,8 @@ public class Controller {
 
             /** Show Attribut's Names and types in the Table Fx */
             showAttributsNames();
+
+            boxPlot = new BoxPlot(fileName,instances,swingNode);
 
         }catch (Exception e) {
             e.printStackTrace();

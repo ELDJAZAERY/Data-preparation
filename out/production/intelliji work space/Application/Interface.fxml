@@ -12,9 +12,9 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.web.WebView?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="712.0" prefWidth="1315.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Application.Controller">
    <children>
@@ -158,12 +158,9 @@
               </content>
             </Tab>
             <Tab text="Boxe-plot">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #e5e5e5;">
-                     <children>
-                        <WebView layoutX="20.0" layoutY="26.0" prefHeight="602.0" prefWidth="1272.0" />
-                     </children></AnchorPane>
-              </content>
+               <content>
+                  <BorderPane fx:id="pane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #E5E5E5;" />
+               </content>
             </Tab>
         </tabs>
       </TabPane>
