@@ -219,9 +219,7 @@ public class Controller {
             numericAttributsTable.setVisible(false);
         }
 
-        if( Integer.valueOf(attribut.distinct()) < 20 ) {
-            barchar(attribut);
-        }
+        barchar(attribut);
     }
 
 
@@ -258,11 +256,15 @@ public class Controller {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                int maxDist = 15 , i = 0;
                 if(attribut.isNumeric()){
                     for(Map.Entry<Double,Integer> entry : labelWeight.entrySet()){
                         XYChart.Series<String, Integer> series = new XYChart.Series<String, Integer>();
                         series.getData().add(new XYChart.Data<String, Integer>(Double.toString(entry.getKey()), entry.getValue()));
                         barchart.getData().add(series);
+
+                        i++;
+                        if(i >= maxDist ) break;
                     }
                 }else{
                     for(Map.Entry<String,Integer> entry : labelWeightNom.entrySet()){

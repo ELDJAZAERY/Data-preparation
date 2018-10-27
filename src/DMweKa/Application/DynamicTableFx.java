@@ -19,6 +19,7 @@ public class DynamicTableFx {
 
     public static TableView dataSetToTableView(DataSet dataSet , TableView tableview){
 
+        int maxNbAttributs = 10 ;
         ObservableList<ObservableList> data = FXCollections.observableArrayList();
         tableview.getColumns().clear();
 
@@ -26,7 +27,7 @@ public class DynamicTableFx {
         /**********************************
          * TABLE COLUMN ADDED DYNAMICALLY *
          **********************************/
-        for(int i=0 ; i< dataSet.nbAttributs(); i++){
+        for(int i=0 ; i< Math.min(dataSet.nbAttributs(),maxNbAttributs); i++){
             final int j = i;
             TableColumn col = new TableColumn(dataSet.getAttribut(i).name());
             col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
@@ -44,7 +45,7 @@ public class DynamicTableFx {
         for(int i=0;i< dataSet.nbInstances();i++){
             //Iterate Row
             ObservableList<String> row = FXCollections.observableArrayList();
-            for(int j=0 ; j < dataSet.nbAttributs(); j++){
+            for(int j=0 ; j < Math.min(dataSet.nbAttributs(),maxNbAttributs); j++){
                 //Iterate Column
                 row.add(dataSet.getAttribut(j).getvalue(i));
             }
