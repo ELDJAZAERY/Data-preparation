@@ -20,6 +20,7 @@ public class DynamicTableFx {
     public static TableView dataSetToTableView(DataSet dataSet , TableView tableview){
 
         ObservableList<ObservableList> data = FXCollections.observableArrayList();
+        tableview.getColumns().clear();
 
 
         /**********************************
@@ -35,7 +36,6 @@ public class DynamicTableFx {
             });
 
             tableview.getColumns().addAll(col);
-            System.out.println("Column ["+i+"] ");
         }
 
         /********************************
@@ -48,7 +48,6 @@ public class DynamicTableFx {
                 //Iterate Column
                 row.add(dataSet.getAttribut(j).getvalue(i));
             }
-            System.out.println("Row [1] added "+row );
             data.add(row);
         }
 

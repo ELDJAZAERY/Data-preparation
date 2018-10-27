@@ -158,7 +158,7 @@
 .main-text
 {
     -fx-fill: -fx-secondary;
-    -fx-font-size: 14pt;
+    -fx-font-size: 16pt;
     -fx-text-alignment: center;
 }
 
@@ -182,7 +182,7 @@
 
 .jfx-layout-actions
 {
-    -fx-hgap:8;
+    -fx-hgap:3;
 }
 
 /*Chart Styling*/
@@ -357,4 +357,45 @@
     -fx-background-insets: 0, 0 0 1 0;
     /* -fx-padding: 0.416667em 0.166667em 0.0em 0.833em; /* 5 2 0 10 */
     -fx-padding: 0.416667em 0.166667em 0.0em 0.0em; /* overridden as 5 2 0 0 */
+}
+
+
+.default-color0.chart-pie { -fx-pie-color: #ffd700; }
+.default-color1.chart-pie { -fx-pie-color: #ffa500; }
+.default-color2.chart-pie { -fx-pie-color: #860061; }
+.default-color3.chart-pie { -fx-pie-color: #adff2f; }
+.default-color4.chart-pie { -fx-pie-color: #ff5700; }
+
+.chart-pie-label-line {
+    -fx-stroke: #8b4513;
+    -fx-fill: #8b4513;
+}
+
+.chart-pie-label {
+    -fx-fill: #8b4513;
+    -fx-font-size: 1em;
+}
+
+.chart-legend {
+    -fx-background-color:  #fafad2;
+    -fx-stroke: #daa520;
+}
+
+/*
+.chart-bar {
+    -fx-font-size: 1.6em;
+    -fx-stroke: #8b4513;
+    -fx-fill: #8b4513;
+    -fx-text-fill: #4682b4;
+    -fx-background-radius: 10;
+    -fx-padding: 15px;
+}
+*/
+
+
+.labelChar {
+    -fx-font-size: 1.6em;
+    -fx-stroke: #2869ed;
+    -fx-fill: #2869ed;
+    -fx-text-fill: #2869ed;
 }

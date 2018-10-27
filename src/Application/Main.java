@@ -14,7 +14,7 @@ public class Main extends Application {
 		
         primaryStage.setTitle("DM weka");
         primaryStage.setScene(new Scene(root));
-        primaryStage.setFullScreen(false);
+        primaryStage.setFullScreen(true);
         primaryStage.show();
    }
 

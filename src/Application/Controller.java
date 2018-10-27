@@ -130,13 +130,6 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        File repo = new File(path);
-        if (repo.isDirectory()) {
-            File[] fileList = repo.listFiles();
-            for (File f : fileList) {
-                combobox.getItems().add(f.getName());
-            }
-        }
 
         // init the colums
 
@@ -157,6 +150,15 @@ public class Controller {
         Q3.setCellValueFactory(new PropertyValueFactory<>("Q3"));
         midRange.setCellValueFactory(new PropertyValueFactory<>("midRange"));
         sum.setCellValueFactory(new PropertyValueFactory<>("sum"));
+
+        File repo = new File(path);
+        if (repo.isDirectory()) {
+            File[] fileList = repo.listFiles();
+            for (File f : fileList) {
+                combobox.getItems().add(f.getName());
+            }
+            if(fileList.length > 0) { combobox.setValue(fileList[0].getName()); afficheInstance();}
+        }
 
 
     }
@@ -216,7 +218,10 @@ public class Controller {
         }else{
             numericAttributsTable.setVisible(false);
         }
-        barchar(attribut);
+
+        if( Integer.valueOf(attribut.distinct()) < 20 ) {
+            barchar(attribut);
+        }
     }
 
 
@@ -239,36 +244,38 @@ public class Controller {
     }
 
     public void afficheFileContent(){
-        fileContentTable = DynamicTableFx.dataSetToTableView(dataSet,fileContentTable);
+        try {
+            fileContentTable = DynamicTableFx.dataSetToTableView(dataSet,fileContentTable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void barchar(AttributDataSet attribut){
         TreeMap<Double,Integer> labelWeight = attribut.getLabelsAndWeightNum();
         TreeMap<String,Integer> labelWeightNom = attribut.getLabelsAndWeightNom();
 
-        if(attribut.isNumeric()){
-            for(Map.Entry<Double,Integer> entry : labelWeight.entrySet()){
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        XYChart.Series<Double, Integer> series = new XYChart.Series<Double, Integer>();
-                        series.getData().add(new XYChart.Data<Double, Integer>(entry.getKey(), entry.getValue()));
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if(attribut.isNumeric()){
+                    for(Map.Entry<Double,Integer> entry : labelWeight.entrySet()){
+                        XYChart.Series<String, Integer> series = new XYChart.Series<String, Integer>();
+                        series.getData().add(new XYChart.Data<String, Integer>(Double.toString(entry.getKey()), entry.getValue()));
                         barchart.getData().add(series);
                     }
-                });
-            }
-        }else{
-            for(Map.Entry<String,Integer> entry : labelWeightNom.entrySet()){
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
+                }else{
+                    for(Map.Entry<String,Integer> entry : labelWeightNom.entrySet()){
                         XYChart.Series<String, Integer> series = new XYChart.Series<String, Integer>();
                         series.getData().add(new XYChart.Data<String, Integer>(entry.getKey(), entry.getValue()));
                         barchart.getData().add(series);
                     }
-                });
+                }
             }
-        }
+        });
+
+        barchart.setTitle(attribut.name().toUpperCase());
+        barchart.autosize();
 
     }
 
