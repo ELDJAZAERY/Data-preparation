@@ -1,31 +1,34 @@
 package DMweKa;
 
 import java.util.ArrayList;
-
-import weka.core.*;
-import DMweKa.Application.ListAttributTable;
-
-
+import DMweKa.Application.TableFx;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+/** Weka bibs  **/
+    import weka.core.Instances;
+    import weka.core.Instance;
+
+
 
 public class DataSet {
+
+    public ArrayList<Instance> instances ;
 
     // List of Attribut's names
     private ArrayList<String> listAttributs = new ArrayList<>();
     // List of Attributs <Class> of DataSet
     private ArrayList<AttributDataSet> attributs = new ArrayList<>();
-    private ArrayList<Instance> instances = new ArrayList<>();
+
 
     private String relation;
     private int nbInstances ;
     private int nbAttributs ;
 
     public DataSet(Instances data) {
+        instances = new ArrayList<>(data);
         relation = data.relationName();
         nbInstances = data.numInstances();
-        this.instances = new ArrayList<>(data);
         nbAttributs = data.numAttributes() ;
         data.setClassIndex(data.numAttributes() - 1);
 
@@ -33,9 +36,10 @@ public class DataSet {
         data = PreProcessing.preProcessData(data);
 
         for(int i=0;i<data.numAttributes();i++){
-            attributs.add(new AttributDataSet(data.attribute(i),data.attributeStats(i),data));
+            attributs.add(new AttributDataSet(data.attribute(i),data));
             listAttributs.add(data.attribute(i).name());
         }
+
     }
 
     public ArrayList<AttributDataSet> getAttributs() {
@@ -55,7 +59,6 @@ public class DataSet {
        return null;
     }
 
-
     public String relation() {
         return relation;
     }
@@ -73,15 +76,16 @@ public class DataSet {
     }
 
 
-    public ObservableList<ListAttributTable> listAttributsTableItems(){
+    public ObservableList<TableFx> listAttributsTableItems(){
         // Reinsialize the static counter
-        ListAttributTable.reInisialize();
-        ObservableList<ListAttributTable> items = FXCollections.observableArrayList();
+        TableFx.reInisialize();
+        ObservableList<TableFx> items = FXCollections.observableArrayList();
         for(AttributDataSet attribut:attributs){
-            items.add(new ListAttributTable(attribut.name(),attribut.type()));
+            items.add(new TableFx(attribut.name(),attribut.type()));
         }
         return items;
     }
+
 
     public void toTableFx(){
         // TODO

@@ -1,10 +1,22 @@
 package DMweKa;
 
+import DMweKa.Application.TableFx;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import weka.core.Attribute;
+import weka.core.Instance;
+import weka.core.Instances;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.TreeMap;
 
-import weka.core.*;
+/**
+ * Weka bibs
+ **/
+/** Weka bibs  **/
+
 
 
 public class AttributDataSet {
@@ -14,7 +26,6 @@ public class AttributDataSet {
 
     private String name ;
     private Attribute attribut;
-    private AttributeStats stats ;
     private ArrayList<Instance> instances ;
 
     /** one day maybe !! xD */
@@ -22,35 +33,50 @@ public class AttributDataSet {
 
     private int distinct ;
     private double  max , min , Q1 , mean , Q3 , midRange  , weight , sum ;
-
     private String mode;
-
     private boolean isNumeric = false;
 
-    AttributDataSet(Attribute attribut, AttributeStats stats , Instances dataSet) {
 
+    // For count the frequent of each Attribut's value < Nominal , Numeric and Date >
+    TreeMap<Double,Integer> valsFreq = new TreeMap<>() ;
+    TreeMap<String,Integer> nominalFreq = new TreeMap<>() ;
+
+
+    AttributDataSet(Attribute attribut, Instances dataSet) {
         this.name = attribut.name();
         this.attribut = attribut;
-        this.stats = stats;
+
         this.instances = new ArrayList<>(dataSet);
-
-        distinct = stats.distinctCount;
         weight   = attribut.weight();
-
 
         // spetial for the numeric attributs !!
         if(type().equals("numeric")) {
             isNumeric = true;
-            max      = stats.numericStats.max;
-            min      = stats.numericStats.min;
-            midRange = (max + min) / 2;
-            mean     = stats.numericStats.mean;
-            sum      = stats.numericStats.sum;
-            CalculateQ123(dataSet);
-            System.out.println("Q1 ---------------> "+Q1);
+            numericCalculus(dataSet);
         }
-        calculeMode();
+        calculeModeDist();
+
     }
+
+    public String getvalue(int i){
+        if(i>instances.size()) return "";
+        String val ;
+        if(isNumeric){
+            val = Double.toString(instances.get(i).value(this.attribut));
+        }else{
+            val = instances.get(i).stringValue(this.attribut);
+        }
+        return val;
+    }
+
+    public TreeMap<String,Integer> getLabelsAndWeightNom(){
+        return nominalFreq;
+    }
+
+    public TreeMap<Double,Integer> getLabelsAndWeightNum(){
+        return valsFreq ;
+    }
+
 
     public String name() {
         return name;
@@ -73,15 +99,15 @@ public class AttributDataSet {
     }
 
     public String min(){
-        return ""+stats.numericStats.min;
+        return ""+min;
     }
 
     public String mean(){
-        return ""+stats.numericStats.mean;
+        return  ""+mean;
     }
 
     public String sum(){
-        return ""+stats.numericStats.sum;
+        return ""+sum;
     }
 
     public String Q1(){
@@ -97,16 +123,17 @@ public class AttributDataSet {
         return ""+midRange;
     }
 
+    public boolean isNumeric(){
+        return isNumeric;
+    }
 
     public String mode(){
         return ""+mode;
     }
 
-
-    protected void CalculateQ123(Instances instances) {
+    private void numericCalculus(Instances instances) {
         double[] values;
         int  half , quarter;
-        double Q2;
 
         // sort attribute data
         values = instances.attributeToDoubleArray(attribut.index());
@@ -116,8 +143,11 @@ public class AttributDataSet {
         half    = values.length / 2;
         quarter = half / 2;
 
-        if (values.length % 2 == 1) Q2 = values[half];
-        else Q2 = (values[half] + values[half + 1]) / 2;
+        this.min = values[0];
+        this.max = values[values.length-1];
+        this.midRange = (min + max) / 2;
+        if (values.length % 2 == 1) this.mean = values[half];
+        else this.mean = (values[half] + values[half + 1]) / 2;
 
 
         if (half % 2 == 1) {
@@ -129,13 +159,13 @@ public class AttributDataSet {
             Q3 = (values[values.length - quarter - 1] + values[values.length - quarter]) / 2;
         }
 
+        for(int i=0;i<values.length;i++){
+            this.sum += values[i];
+        }
     }
 
 
-    private void calculeMode(){
-        // For count the frequent of each Attribut's value < Nominal , Numeric and Date >
-        TreeMap<Double,Integer> valsFreq = new TreeMap<>() ;
-        TreeMap<String,Integer> nominalFreq = new TreeMap<>() ;
+    private void calculeModeDist(){
 
         Double numVal ; String nominalVal ; Integer freq ;
 
@@ -150,6 +180,7 @@ public class AttributDataSet {
                     valsFreq.put(numVal,1);
                 }
             }
+            this.distinct = valsFreq.size();
         }else{
             /** Mode For  Nominal , String , Date and Relational Type !! **/
             for(Instance inst:instances){
@@ -161,10 +192,70 @@ public class AttributDataSet {
                     nominalFreq.put(nominalVal,1);
                 }
             }
+            this.distinct = nominalFreq.size();
         }
 
         if(nominalFreq.size() == valsFreq.size()) return;
-        this.mode = (isNumeric) ? ""+valsFreq.firstKey() : nominalFreq.firstKey();
+        if(isNumeric){
+            Map.Entry<Double,Integer> maxEntry = null;
+            for (Map.Entry<Double,Integer> entry : valsFreq.entrySet()) {
+                if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0){
+                    maxEntry = entry;
+                }
+            }
+            this.mode = Double.toString(maxEntry.getKey());
+        }else{
+            Map.Entry<String,Integer> maxEntryy = null;
+            for (Map.Entry<String,Integer> entry : nominalFreq.entrySet()) {
+                if (maxEntryy == null || (entry.getValue() > maxEntryy.getValue()) ){
+                    maxEntryy = entry;
+                }
+            }
+            this.mode = maxEntryy.getKey();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "AttributDataSet{" +
+                "name='" + name + '\'' +
+                ", distinct=" + distinct +
+                ", max=" + max +
+                ", min=" + min +
+                ", Q1=" + Q1 +
+                ", mean=" + mean +
+                ", Q3=" + Q3 +
+                ", midRange=" + midRange +
+                ", weight=" + weight +
+                ", sum=" + sum +
+                ", mode='" + mode + '\'' +
+                '}';
+    }
+
+
+    public ObservableList<TableFx> tableFxItems(){
+        // Reinsialize the static counter
+        TableFx.reInisialize();
+        ObservableList<TableFx> items = FXCollections.observableArrayList();
+        if(isNumeric){
+            for(Double key : valsFreq.descendingKeySet()){
+                items.add(new TableFx(Double.toString(key),""+valsFreq.get(key),2));
+            }
+        }else{
+            for(String key : nominalFreq.descendingKeySet()){
+                items.add(new TableFx(key,""+nominalFreq.get(key),2));
+            }
+        }
+
+        return items;
+    }
+
+    public ObservableList<TableFx> tableFxItemsNumiric(){
+        // Reinsialize the static counter
+        TableFx.reInisialize();
+        ObservableList<TableFx> items = FXCollections.observableArrayList();
+        items.add(new TableFx(max(),min(),mean(),Q1(),Q3(),mideRange(),sum()));
+        return items;
     }
 
 

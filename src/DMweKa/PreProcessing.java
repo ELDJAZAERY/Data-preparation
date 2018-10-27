@@ -1,15 +1,17 @@
 package DMweKa;
 
-import weka.core.Attribute;
-import weka.core.Instance;
-import weka.core.Instances;
 import java.util.ArrayList;
 import java.util.TreeMap;
+
+/**  Weka bibs **/
+    import weka.core.Attribute;
+    import weka.core.Instance;
+    import weka.core.Instances;
 
 
 public class PreProcessing {
 
-    // checked !!
+
     public static Instances preProcessData(Instances data) {
         int nbAttributs = data.numAttributes();
         ArrayList<Instance> instances = new ArrayList<>(data);
@@ -85,8 +87,6 @@ public class PreProcessing {
         if(valsFreq.size() == 0) return 0.0;
         return valsFreq.firstKey();
     }
-
-
 
 
     private static String getClassOfInstance(Instance instance){

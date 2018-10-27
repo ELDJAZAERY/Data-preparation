@@ -1,27 +1,33 @@
 package Application;
 
-import DMweKa.*;
-import DMweKa.Application.ListAttributTable;
-import DMweKa.Calculateur;
-import DMweKa.Instac;
+
+import DMweKa.Application.DynamicTableFx;
+import DMweKa.Application.TableFx;
+import DMweKa.AttributDataSet;
+import DMweKa.DataSet;
+import DMweKa.PreProcessing;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.*;
-import javafx.scene.control.TableView;
-import javafx.scene.input.MouseEvent;
-import java.io.File;
-import java.net.URL;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
-import java.util.*;
-import javafx.event.ActionEvent;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import weka.core.*;
+import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
+
+import java.io.File;
+import java.util.Map;
+import java.util.TreeMap;
+
+/**
+ * Weka bibs
+ **/
+
 
 
 public class Controller {
@@ -29,17 +35,16 @@ public class Controller {
     private final String path = "data/";
     private DataSet dataSet;
 
-    private ObservableList<ListAttributTable> attributslist = FXCollections.observableArrayList();
+    private ObservableList<TableFx> attributslist = FXCollections.observableArrayList();
 
 
-    /** File Chooser */
+    /** File Chooser  - Data Set Properties */
     @FXML
     private ComboBox<String> combobox;
+
     @FXML
-    private TextArea cotent;
+    private TableView<TableFx> fileContentTable;
 
-
-    /** Text Feild --- !! **/
     @FXML
     private TextField relation;
 
@@ -48,6 +53,27 @@ public class Controller {
 
     @FXML
     private TextField nbinstances;
+
+
+
+    /** Attribut's Names and Types !! Table !! **/
+    @FXML
+    private TableView<TableFx> attributsTable;
+
+    @FXML
+    private TableColumn<TableFx,Integer> num;
+
+    @FXML
+    private TableColumn<TableFx,String> name;
+
+    @FXML
+    private TableColumn<TableFx,String> type;
+
+
+    /** Name , Type , Distainct , mode , Num , Lable , weight ---> for each Attribut **/
+    /** and Max Min Mean Q1 Q3 midRange sum  ---> for each Numeric Attribut **/
+    @FXML
+    private TableView<TableFx> selectedAttributsTable;
 
     @FXML
     private TextField Nom;
@@ -58,48 +84,48 @@ public class Controller {
     @FXML
     private TextField distincts;
 
-
-
-    /** Attribut's Names and Types !! Table !! **/
     @FXML
-    private TableView<ListAttributTable> table;
+    private TextField mode;
 
     @FXML
-    private TableColumn<ListAttributTable,Integer> num;
+    private TableColumn<TableFx,Integer> nume;
 
     @FXML
-    private TableColumn<ListAttributTable,String> name;
+    private TableColumn<TableFx,String> label;
 
     @FXML
-    private TableColumn<ListAttributTable,String> type;
+    private TableColumn<TableFx,String> weight;
+
+    /** Max Min Mean Q1 Q3 midRange sum  ---> for each Numeric Attribut **/
+
+    @FXML
+    private TableView<TableFx> numericAttributsTable;
+
+    @FXML
+    private TableColumn<TableFx,String> max;
+
+    @FXML
+    private TableColumn<TableFx,String> min;
+
+    @FXML
+    private TableColumn<TableFx,String> mean;
+
+    @FXML
+    private TableColumn<TableFx,Integer> Q1;
+
+    @FXML
+    private TableColumn<TableFx,String> Q3;
+
+    @FXML
+    private TableColumn<TableFx,String> midRange;
+
+    @FXML
+    private TableColumn<TableFx,String> sum;
 
 
-
-
-
-
-
-    // -------------- old ------------- //
-
-
-
-
-
-
+    // Histogramme Barchart
     @FXML
     private BarChart barchart;
-
-    @FXML
-    private TableColumn<Calculateur,Integer> nume;
-
-    @FXML
-    private TableColumn<Calculateur,String> label;
-
-    @FXML
-    private TableColumn<Calculateur,Integer> count;
-
-    @FXML
-    private TableColumn<Calculateur,String> weight;
 
 
     @FXML
@@ -112,16 +138,28 @@ public class Controller {
             }
         }
 
+        // init the colums
+
         num.setCellValueFactory(new PropertyValueFactory<>("num"));
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         type.setCellValueFactory(new PropertyValueFactory<>("Type"));
 
         nume.setCellValueFactory(new PropertyValueFactory<>("num"));
         label.setCellValueFactory(new PropertyValueFactory<>("label"));
-        count.setCellValueFactory(new PropertyValueFactory<>("count"));
         weight.setCellValueFactory(new PropertyValueFactory<>("weight"));
 
-     }
+        /** Max Min Mean Q1 Q3 midRange sum  ---> for each Numeric Attribut **/
+        numericAttributsTable.setVisible(false);
+        max.setCellValueFactory(new PropertyValueFactory<>("max"));
+        min.setCellValueFactory(new PropertyValueFactory<>("min"));
+        mean.setCellValueFactory(new PropertyValueFactory<>("mean"));
+        Q1.setCellValueFactory(new PropertyValueFactory<>("Q1"));
+        Q3.setCellValueFactory(new PropertyValueFactory<>("Q3"));
+        midRange.setCellValueFactory(new PropertyValueFactory<>("midRange"));
+        sum.setCellValueFactory(new PropertyValueFactory<>("sum"));
+
+
+    }
 
 
     @FXML
@@ -140,7 +178,8 @@ public class Controller {
 
             // display --->
             // TODO : poster the content in table element
-            cotent.appendText(instances.toSummaryString());
+            afficheFileContent();
+            //cotent.appendText(instances.toSummaryString());
 
             /** Instance  Proprities */
             relation.appendText(dataSet.relation());
@@ -157,23 +196,80 @@ public class Controller {
 
 
     @FXML //en cliquant sur un attribut
-    private void showAttribut(){ }
+    private void showSelectedAttribut(){
+        clearForAttribut();
+        TableFx item = attributsTable.getSelectionModel().getSelectedItem();
+        if(item == null) return;
+        AttributDataSet attribut = dataSet.getAttribut(item.getName());
 
+        Nom.appendText(attribut.name());
+        Type.appendText(attribut.type());
+        distincts.appendText(attribut.distinct());
+        mode.appendText(attribut.mode());
 
-    public void clearForInstance(){
-        cotent.clear();relation.clear();nbinstances.clear();attributes.clear();
-    }
+        selectedAttributsTable.setItems(attribut.tableFxItems());
+        selectedAttributsTable.sort();
 
-    public void clearForAttribut(){
-        Nom.clear();Type.clear();distincts.clear();
-        barchart.getData().clear();barchart.layout();
+        if(attribut.isNumeric()){
+            numericAttributsTable.setVisible(true);
+            numericAttributsTable.setItems(attribut.tableFxItemsNumiric());
+        }else{
+            numericAttributsTable.setVisible(false);
+        }
+        barchar(attribut);
     }
 
 
     /** Show Attribut's Names and Types in the Table Fx */
     public void showAttributsNames(){
-        table.setItems(dataSet.listAttributsTableItems());
-        table.sort();
+        attributsTable.setItems(dataSet.listAttributsTableItems());
+        attributsTable.sort();
+    }
+
+
+    public void clearForInstance(){
+        relation.clear();nbinstances.clear();attributes.clear(); mode.clear();
+    }
+
+
+    public void clearForAttribut(){
+        Nom.clear();Type.clear();distincts.clear();
+        barchart.getData().clear();barchart.layout();
+        mode.clear();
+    }
+
+    public void afficheFileContent(){
+        fileContentTable = DynamicTableFx.dataSetToTableView(dataSet,fileContentTable);
+    }
+
+    public void barchar(AttributDataSet attribut){
+        TreeMap<Double,Integer> labelWeight = attribut.getLabelsAndWeightNum();
+        TreeMap<String,Integer> labelWeightNom = attribut.getLabelsAndWeightNom();
+
+        if(attribut.isNumeric()){
+            for(Map.Entry<Double,Integer> entry : labelWeight.entrySet()){
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        XYChart.Series<Double, Integer> series = new XYChart.Series<Double, Integer>();
+                        series.getData().add(new XYChart.Data<Double, Integer>(entry.getKey(), entry.getValue()));
+                        barchart.getData().add(series);
+                    }
+                });
+            }
+        }else{
+            for(Map.Entry<String,Integer> entry : labelWeightNom.entrySet()){
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        XYChart.Series<String, Integer> series = new XYChart.Series<String, Integer>();
+                        series.getData().add(new XYChart.Data<String, Integer>(entry.getKey(), entry.getValue()));
+                        barchart.getData().add(series);
+                    }
+                });
+            }
+        }
+
     }
 
 }
