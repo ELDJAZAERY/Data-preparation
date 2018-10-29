@@ -187,14 +187,14 @@ public class Controller {
 
             dataSet = new DataSet(instances);
 
-            // TODO : poster the content in table element
             afficheFileContent();
             if(PreProcessing.missing.size()>0) {
                 missingvalueTab.setDisable(false);
                 affichemissingValues();
             }
             else missingvalueTab.setDisable(true);
-            System.out.println("Cheeeking !!!"+PreProcessing.missing.size());
+
+
             /** Instance  Proprities */
             relation.appendText(dataSet.relation());
             nbinstances.appendText(Integer.toString(dataSet.nbInstances()));

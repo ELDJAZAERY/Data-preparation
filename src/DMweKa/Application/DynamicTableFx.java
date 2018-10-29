@@ -93,7 +93,7 @@ public class DynamicTableFx {
             //Iterate Row
             ObservableList<String> row = FXCollections.observableArrayList();
 
-            int index = instances.indexOf(entry.getKey());
+            int index = instances.indexOf(entry.getKey())+1;
 
             row.add(""+index);                                              // 1 Instance Num
             row.add(entry.getValue().name());                               // 2 Attribut
