@@ -58,6 +58,9 @@ public class AttributDataSet {
 
     }
 
+    public ArrayList<Instance> getinstances(){
+        return instances;
+    }
     public String getvalue(int i){
         if(i>instances.size()) return "";
         String val ;
@@ -77,7 +80,9 @@ public class AttributDataSet {
         return valsFreq ;
     }
 
-
+    public int getindex(){
+        return attribut.index();
+    }
     public String name() {
         return name;
     }
@@ -94,9 +99,10 @@ public class AttributDataSet {
         return ""+weight;
     }
 
-    public String max(){
-        return ""+max;
-    }
+    public String max(){ return ""+max; }
+
+    public Double valmax() {return  max;}
+    public Double valmin() {return  min;}
 
     public String min(){
         return ""+min;

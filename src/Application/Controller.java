@@ -14,10 +14,7 @@ import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import weka.core.Instances;
@@ -49,6 +46,11 @@ public class Controller {
     private TableView<TableFx> fileContentTable;
 
     @FXML
+    private TableView<TableFx> missingValuesTable;
+    @FXML
+    private Tab missingvalueTab;
+
+    @FXML
     private TextField relation;
 
     @FXML
@@ -56,7 +58,6 @@ public class Controller {
 
     @FXML
     private TextField nbinstances;
-
 
 
     /** Attribut's Names and Types !! Table !! **/
@@ -135,7 +136,7 @@ public class Controller {
     @FXML
     private BorderPane pane;
     private SwingNode swingNode = new SwingNode();
-    private BoxPlot boxPlot;
+
 
 
 
@@ -184,16 +185,16 @@ public class Controller {
             dataSource = new DataSource(path+fileName);
             Instances instances = dataSource.getDataSet();
 
-            // Replace Missing Values !!
-            instances = PreProcessing.preProcessData(instances);
-
             dataSet = new DataSet(instances);
 
-            // display --->
             // TODO : poster the content in table element
             afficheFileContent();
-            //cotent.appendText(instances.toSummaryString());
-
+            if(PreProcessing.missing.size()>0) {
+                missingvalueTab.setDisable(false);
+                affichemissingValues();
+            }
+            else missingvalueTab.setDisable(true);
+            System.out.println("Cheeeking !!!"+PreProcessing.missing.size());
             /** Instance  Proprities */
             relation.appendText(dataSet.relation());
             nbinstances.appendText(Integer.toString(dataSet.nbInstances()));
@@ -202,7 +203,7 @@ public class Controller {
             /** Show Attribut's Names and types in the Table Fx */
             showAttributsNames();
 
-            boxPlot = new BoxPlot(fileName,instances,swingNode);
+            new BoxPlot(fileName,instances,swingNode);
 
         }catch (Exception e) {
             e.printStackTrace();
@@ -262,6 +263,15 @@ public class Controller {
         }
     }
 
+    public void affichemissingValues(){
+        try {
+            missingValuesTable = DynamicTableFx.missingValueToTableView(PreProcessing.missing,dataSet,missingValuesTable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void barchar(AttributDataSet attribut){
         TreeMap<Double,Integer> labelWeight = attribut.getLabelsAndWeightNum();
         TreeMap<String,Integer> labelWeightNom = attribut.getLabelsAndWeightNom();
@@ -284,6 +294,9 @@ public class Controller {
                         XYChart.Series<String, Integer> series = new XYChart.Series<String, Integer>();
                         series.getData().add(new XYChart.Data<String, Integer>(entry.getKey(), entry.getValue()));
                         barchart.getData().add(series);
+
+                        i++;
+                        if(i >= maxDist ) break;
                     }
                 }
             }

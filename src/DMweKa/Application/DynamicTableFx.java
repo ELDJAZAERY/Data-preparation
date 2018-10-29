@@ -1,5 +1,6 @@
 package DMweKa.Application;
 
+import DMweKa.DataSet;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -8,8 +9,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
-import DMweKa.DataSet;
+import weka.core.Attribute;
+import weka.core.Instance;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class DynamicTableFx {
@@ -19,7 +24,7 @@ public class DynamicTableFx {
 
     public static TableView dataSetToTableView(DataSet dataSet , TableView tableview){
 
-        int maxNbAttributs = 10 ;
+        int maxNbAttributs = 100 ;
         ObservableList<ObservableList> data = FXCollections.observableArrayList();
         tableview.getColumns().clear();
 
@@ -57,5 +62,48 @@ public class DynamicTableFx {
         return tableview;
     }
 
+    public static TableView missingValueToTableView(HashMap<Instance,Attribute> missing,DataSet dataset ,TableView tableview){
 
+        ObservableList<ObservableList> data = FXCollections.observableArrayList();
+        tableview.getColumns().clear();
+
+        String[] columsNames = {"Instance Num","Attribut","New Value"};
+
+        /**********************************
+         * TABLE COLUMN ADDED DYNAMICALLY *
+         **********************************/
+        for(int i=0 ; i < columsNames.length; i++){
+            final int j = i;
+            TableColumn col = new TableColumn(columsNames[i]);
+            col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
+                public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                    return new SimpleStringProperty(param.getValue().get(j).toString());
+                }
+            });
+
+            tableview.getColumns().addAll(col);
+        }
+
+
+        /********************************
+         * Data added to ObservableList *
+         ********************************/
+        ArrayList<Instance> instances = dataset.instances;
+        for (Map.Entry<Instance,Attribute> entry : missing.entrySet()) {
+            //Iterate Row
+            ObservableList<String> row = FXCollections.observableArrayList();
+
+            int index = instances.indexOf(entry.getKey());
+
+            row.add(""+index);                                              // 1 Instance Num
+            row.add(entry.getValue().name());                               // 2 Attribut
+            row.add(dataset.getAttVal(entry.getKey(),entry.getValue()));    // 3 new value
+
+            data.add(row);
+        }
+
+        //FINALLY ADDED TO TableView
+        tableview.setItems(data);
+        return tableview;
+    }
 }

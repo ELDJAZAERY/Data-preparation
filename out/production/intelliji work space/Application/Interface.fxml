@@ -129,11 +129,26 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="fileContentTable" layoutX="45.0" layoutY="56.0" prefHeight="562.0" prefWidth="1242.0">
+                        <TableView fx:id="fileContentTable" layoutX="45.0" layoutY="56.0" prefHeight="562.0" prefWidth="1242.0" />
+                        <Label layoutX="32.0" layoutY="18.0" text="\@data" textFill="#ffd400">
+                           <font>
+                              <Font name="System Bold Italic" size="22.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab fx:id="missingvalueTab" text="Missing Values">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="missingValuesTable" layoutX="45.0" layoutY="56.0" prefHeight="562.0" prefWidth="1242.0">
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                           </columnResizePolicy></TableView>
-                        <Label layoutX="32.0" layoutY="18.0" text="\@data" textFill="#ffd400">
+                           </columnResizePolicy>
+                        </TableView>
+                        <Label layoutX="32.0" layoutY="18.0" text="\\\@Missing Values" textFill="#ffd400">
                            <font>
                               <Font name="System Bold Italic" size="22.0" />
                            </font>

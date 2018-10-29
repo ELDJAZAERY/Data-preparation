@@ -1,36 +1,44 @@
 package DMweKa;
 
+import weka.core.Attribute;
+import weka.core.Instance;
+import weka.core.Instances;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeMap;
 
-/**  Weka bibs **/
-    import weka.core.Attribute;
-    import weka.core.Instance;
-    import weka.core.Instances;
+/**
+ * Weka bibs
+ **/
 
 
 public class PreProcessing {
 
+    public static HashMap<Instance,Attribute> missing = new HashMap<>();
 
     public static Instances preProcessData(Instances data) {
         int nbAttributs = data.numAttributes();
         ArrayList<Instance> instances = new ArrayList<>(data);
+
+        missing.clear();
 
         for(Instance inst:instances){
             if(!inst.hasMissingValue()) continue;
             for(int i=0;i<nbAttributs;i++){
                 if(inst.isMissing(i)){
                     if(inst.attribute(i).isNumeric()){
-                        inst.setValue(i,modeNumForClass(instances,inst.attribute(i),getClassOfInstance(inst)));
+                        Double mode = modeNumForClass(instances,inst.attribute(i),getClassOfInstance(inst));
+                        inst.setValue(i,mode);
                     }else{
                         inst.setValue(i,modeNomForClass(instances,inst.attribute(i),getClassOfInstance(inst)));
                     }
+                    missing.put(inst,inst.attribute(i));
                 }
             }
         }
         return data;
     }
-
 
     private static String modeNomForClass(ArrayList<Instance> instances , Attribute attribut, String clas){
         /** For count the frequent of each Attribut's value < Nominal and Date > **/
@@ -105,5 +113,23 @@ public class PreProcessing {
         if( class2 == null || class1.equals("missing") || class2.equals("missing")) return true ;
         return class1.equalsIgnoreCase(class2);
     }
+
+    public static void normaizeNumeric(DataSet dataSet){
+        int index ;
+        for(AttributDataSet att:dataSet.getAttributs() ){
+            if(!att.isNumeric()) continue;
+            index = att.getindex();
+            for(Instance inst:att.getinstances()){
+                Double val = inst.value(index) , max = att.valmax() , min  = att.valmin();
+                inst.setValue(index,normalize(val,max,min));
+            }
+        }
+    }
+
+    private static Double normalize(Double x , Double Min , Double Max){
+        x =   1 - ( (x-Min) / (Max-Min) ) ;
+        return x;
+    }
+
 
 }
